@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Your Cart | Savory-X</title>
+  <meta name="description" content="Review the items in your Savory-X cart.">
+  <link rel="stylesheet" href="product.css">
+  <link rel="stylesheet" href="cart.css">
+  <link rel="stylesheet" href="shortcuts.css">
+  <script src="product.js" defer></script>
+  <script src="cart.js" defer></script>
+  <script src="shortcuts.js" defer></script>
+</head>
+
+<body data-page="cart">
+  <!-- <a class="skip-link" href="#main">Skip to main content</a> -->
+
+  <!-- HEADER (same as home and products) -->
+  <header class="site-header">
+    <a class="brand-group" href="home.html">
+      <img class="logo" src="images/logo.png" alt="" width="32" height="32">
+      <span class="brand">Savory-X</span>
+    </a>
+
+    <nav class="site-nav" aria-label="Main">
+      <ul>
+        <li>
+          <a href="home.html">
+            <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M3 11l9-8 9 8M5 10v10h14V10M10 20v-6h4v6" />
+            </svg>
+            <span class="nav-label">Home</span>
+          </a>
+        </li>
+        <li>
+          <a href="product.html">
+            <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" />
+            </svg>
+            <span class="nav-label">Products</span>
+          </a>
+        </li>
+        <li>
+          <a href="track.html">
+            <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8M12 13v8" />
+            </svg>
+            <span class="nav-label">Track order</span>
+          </a>
+        </li>
+        <li>
+          <a href="cart.html" aria-current="page">
+            <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <circle cx="9" cy="20" r="1.5" />
+              <circle cx="18" cy="20" r="1.5" />
+              <path d="M2 3h3l2.5 12h11l2-8H6" />
+            </svg>
+            <span class="nav-label">Cart</span>
+            <span id="cart-count">0</span><span class="visually-hidden"> items</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main" tabindex="-1">
+
+    <!-- BREADCRUMB AND HEADING -->
+    <div class="cart-heading">
+      <h1>Shopping Cart</h1>
+      <p class="cart-count-line" id="cart-heading-count"></p>
+    </div>
+
+    <noscript>
+      <p class="cart-noscript">Your cart needs JavaScript to load. Please turn it on and refresh the page.</p>
+    </noscript>
+
+    <!-- CART (cart.js fills #cart-items and the totals) -->
+    <div class="cart-layout" id="cart-content" hidden>
+
+      <div class="cart-main">
+        <ul id="cart-items" class="cart-items"></ul>
+
+        <!-- Phones only: opens the order summary drawer -->
+        <button class="btn open-summary" id="open-summary" type="button" aria-haspopup="dialog"
+          aria-controls="order-summary" aria-expanded="false">
+          <span>View Order Summary</span>
+          <span id="open-summary-total"></span>
+        </button>
+      </div>
+
+      <!-- Normal section on tablet and desktop, bottom drawer on phones -->
+      <section class="order-summary" id="order-summary" aria-labelledby="summary-title">
+        <div class="drawer-grab">
+          <span class="drawer-handle" aria-hidden="true"></span>
+          <div class="summary-head">
+            <h2 id="summary-title">Order Summary</h2>
+            <button class="drawer-close" id="close-summary" type="button"
+              aria-label="Close order summary">&times;</button>
+          </div>
+        </div>
+
+        <dl class="summary-list">
+          <div>
+            <dt>Subtotal</dt>
+            <dd id="subtotal">&#8358;0</dd>
+          </div>
+          <div>
+            <dt>Delivery</dt>
+            <dd id="delivery">Calculated at checkout</dd>
+          </div>
+          <div class="total">
+            <dt>Total <span class="total-note">before delivery</span></dt>
+            <dd id="total">&#8358;0</dd>
+          </div>
+        </dl>
+
+        <div class="summary-actions">
+          <a class="btn btn-block" href="checkout.html">Checkout</a>
+          <a class="btn btn-secondary btn-block continue-link" href="product.html">Continue shopping</a>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- EMPTY STATE -->
+    <div id="cart-empty" class="cart-empty" hidden>
+      <svg class="empty-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <circle cx="9" cy="20" r="1.5" />
+        <circle cx="18" cy="20" r="1.5" />
+        <path d="M2 3h3l2.5 12h11l2-8H6" />
+      </svg>
+      <h2 id="cart-empty-title" tabindex="-1">Your cart is empty.</h2>
+      <p>Looks like you haven't added anything to your cart yet.</p>
+      <a class="btn" href="product.html">Start Shopping</a>
+    </div>
+  </main>
+
+  <div id="drawer-overlay" class="drawer-overlay" aria-hidden="true"></div>
+
+  <div id="status-message" class="visually-hidden" role="status" aria-live="polite"></div>
+
+  <!-- FOOTER (same as home and products) -->
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div class="footer-col footer-brand">
+        <a class="brand-group" href="home.html">
+          <img class="logo" src="images/Logo white.png" alt="">
+          <span class="brand">Savory-X</span>
+        </a>
+        <p>Thoughtful essentials for your kitchen, home and workspace.</p>
+      </div>
+      <div class="footer-col">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="home.html">Home</a></li>
+          <li><a href="product.html">Products</a></li>
+          <li><a href="cart.html">Cart</a></li>
+          <li><a href="track.html">Track Order</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>Customer Support</h3>
+        <ul>
+          <li><a href="mailto:hello@savoryx.com">hello@savoryx.com</a></li>
+          <li><a href="https://wa.me/2340000000000">Chat on WhatsApp</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p><small>&copy; <span id="year">2026</span> Savory-X. All rights reserved.</small></p>
+      <button class="btn-link" id="shortcuts-btn" aria-haspopup="dialog">Keyboard Shortcuts</button>
+    </div>
+  </footer>
+
+  <!-- SHORTCUTS MODAL -->
+  <dialog id="shortcuts-dialog" class="shortcuts-dialog" aria-labelledby="sc-title">
+    <div class="dialog-header">
+      <h2 id="sc-title">Keyboard Shortcuts</h2>
+      <button class="dialog-close" id="close-shortcuts" aria-label="Close">&times;</button>
+    </div>
+    <div class="dialog-content">
+      <h3>Cart Page</h3>
+      <dl class="shortcut-list">
+        <div>
+          <dt><kbd>&larr;</kbd> <kbd>&rarr;</kbd></dt>
+          <dd>Choose previous / next item</dd>
+        </div>
+        <div>
+          <dt><kbd>+</kbd> <kbd>&minus;</kbd></dt>
+          <dd>Quantity of the chosen item</dd>
+        </div>
+        <div>
+          <dt><kbd>Shift</kbd> + <kbd>R</kbd></dt>
+          <dd>Remove the chosen item</dd>
+        </div>
+        <div>
+          <dt><kbd>N</kbd></dt>
+          <dd>Go to checkout</dd>
+        </div>
+      </dl>
+      <h3>Every Page</h3>
+      <dl class="shortcut-list">
+        <div>
+          <dt><kbd>H</kbd></dt>
+          <dd>Go to Home page</dd>
+        </div>
+        <div>
+          <dt><kbd>P</kbd></dt>
+          <dd>Go to Products page</dd>
+        </div>
+        <div>
+          <dt><kbd>T</kbd></dt>
+          <dd>Go to Track order page</dd>
+        </div>
+        <div>
+          <dt><kbd>C</kbd></dt>
+          <dd>Go to Cart</dd>
+        </div>
+      </dl>
+    </div>
+  </dialog>
+</body>
+
+</html>

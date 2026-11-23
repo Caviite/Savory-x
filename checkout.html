@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Checkout | Savory-X</title>
+  <meta name="description" content="Enter your delivery details and pay by bank transfer at Savory-X.">
+  <link rel="stylesheet" href="product.css">
+  <link rel="stylesheet" href="checkout.css">
+  <link rel="stylesheet" href="shortcuts.css">
+  <script src="product.js" defer></script>
+  <script src="checkout.js" defer></script>
+  <script src="shortcuts.js" defer></script>
+</head>
+
+<body data-page="checkout">
+  <!-- <a class="skip-link" href="#main">Skip to main content</a> -->
+
+  <!-- HEADER (same as home, products and cart) -->
+  <header class="site-header">
+    <a class="brand-group" href="home.html">
+      <img class="logo" src="images/logo.png" alt="" width="32" height="32">
+      <span class="brand">Savory-X</span>
+    </a>
+
+    <nav class="site-nav" aria-label="Main">
+      <ul>
+        <li>
+          <a href="home.html">
+            <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M3 11l9-8 9 8M5 10v10h14V10M10 20v-6h4v6" />
+            </svg>
+            <span class="nav-label">Home</span>
+          </a>
+        </li>
+        <li>
+          <a href="product.html">
+            <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" />
+            </svg>
+            <span class="nav-label">Products</span>
+          </a>
+        </li>
+        <li>
+          <a href="track.html">
+            <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8M12 13v8" />
+            </svg>
+            <span class="nav-label">Track order</span>
+          </a>
+        </li>
+        <li>
+          <a href="cart.html">
+            <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <circle cx="9" cy="20" r="1.5" />
+              <circle cx="18" cy="20" r="1.5" />
+              <path d="M2 3h3l2.5 12h11l2-8H6" />
+            </svg>
+            <span class="nav-label">Cart</span>
+            <span id="cart-count">0</span><span class="visually-hidden"> items</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main" tabindex="-1">
+
+    <!-- HEADING -->
+    <div class="co-heading">
+      <a class="co-back" href="cart.html">&lsaquo; Back to cart</a>
+      <h1>Checkout</h1>
+      <p class="co-sub">Add your delivery details, then pay by bank transfer.</p>
+    </div>
+
+    <noscript>
+      <p class="co-warning">Checkout needs JavaScript. Please turn it on and refresh the page.</p>
+    </noscript>
+
+    <!-- PROGRESS: two steps -->
+    <ol id="step-indicator" class="co-steps" aria-label="Checkout progress">
+      <li class="co-step is-current" aria-current="step">
+        <span class="co-step-dot" aria-hidden="true">
+          <span class="co-step-num">1</span>
+          <svg class="co-step-check" viewBox="0 0 24 24" focusable="false">
+            <path d="M5 12.5l4.5 4.5L19 7.5" />
+          </svg>
+        </span>
+        <span class="co-step-text">Your details <span class="visually-hidden co-step-state">(current step)</span></span>
+      </li>
+      <li class="co-step">
+        <span class="co-step-dot" aria-hidden="true">
+          <span class="co-step-num">2</span>
+          <svg class="co-step-check" viewBox="0 0 24 24" focusable="false">
+            <path d="M5 12.5l4.5 4.5L19 7.5" />
+          </svg>
+        </span>
+        <span class="co-step-text">Pay <span class="visually-hidden co-step-state">(upcoming step)</span></span>
+      </li>
+    </ol>
+
+    <!-- EMPTY STATE (checkout.js shows it when the cart is empty) -->
+    <div id="checkout-empty" class="co-empty" hidden>
+      <svg class="co-empty-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <circle cx="9" cy="20" r="1.5" />
+        <circle cx="18" cy="20" r="1.5" />
+        <path d="M2 3h3l2.5 12h11l2-8H6" />
+      </svg>
+      <h2>Your cart is empty.</h2>
+      <p>Add something to your cart first, then come back to check out.</p>
+      <a class="btn" href="product.html">Start Shopping</a>
+    </div>
+
+    <div class="co-layout" id="checkout-content">
+
+      <div class="co-main">
+
+        <!-- Shown if some cart items could not be found -->
+        <p id="data-warning" class="co-warning" role="alert" hidden>
+          Some items in your cart could not be found and were left out. Please check your cart.
+        </p>
+
+        <!-- Error list: appears when the form has mistakes -->
+        <div id="error-summary" class="co-errors" role="alert" tabindex="-1" hidden>
+          <h2>Please fix the following</h2>
+          <ul id="error-list"></ul>
+        </div>
+
+        <!-- ===== STEP 1: details ===== -->
+        <section id="details-section" class="co-panel co-step-panel" aria-labelledby="details-heading">
+          <h2 id="details-heading" tabindex="-1">Your details</h2>
+
+          <form id="details-form" novalidate>
+
+            <fieldset>
+              <legend>Contact</legend>
+
+              <div class="co-row">
+                <div class="co-field">
+                  <label for="full-name">Full name <span class="co-req">(required)</span></label>
+                  <input type="text" id="full-name" name="full-name" autocomplete="name"
+                    aria-describedby="full-name-error">
+                  <p class="co-error" id="full-name-error"></p>
+                </div>
+
+                <div class="co-field">
+                  <label for="phone">Phone number <span class="co-req">(required)</span></label>
+                  <input type="tel" id="phone" name="phone" inputmode="tel" autocomplete="tel"
+                    placeholder="0801 234 5678" aria-describedby="phone-hint phone-error">
+                  <p class="co-hint" id="phone-hint">We call or text this number about your delivery.</p>
+                  <p class="co-error" id="phone-error"></p>
+                </div>
+              </div>
+
+              <div class="co-field">
+                <label for="email">Email <span class="co-req">(optional)</span></label>
+                <input type="email" id="email" name="email" autocomplete="email" aria-describedby="email-error">
+                <p class="co-error" id="email-error"></p>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Delivery address</legend>
+
+              <div class="co-field">
+                <label for="street">Street address <span class="co-req">(required)</span></label>
+                <input type="text" id="street" name="street" autocomplete="street-address"
+                  aria-describedby="street-error">
+                <p class="co-error" id="street-error"></p>
+              </div>
+
+              <div class="co-row">
+                <div class="co-field">
+                  <label for="city">City or town <span class="co-req">(required)</span></label>
+                  <input type="text" id="city" name="city" autocomplete="address-level2" aria-describedby="city-error">
+                  <p class="co-error" id="city-error"></p>
+                </div>
+
+                <div class="co-field">
+                  <label for="state">State <span class="co-req">(required)</span></label>
+                  <select id="state" name="state" autocomplete="address-level1" aria-describedby="state-error">
+                    <option value="">Choose a state</option>
+                    <option>Abia</option>
+                    <option>Adamawa</option>
+                    <option>Akwa Ibom</option>
+                    <option>Anambra</option>
+                    <option>Bauchi</option>
+                    <option>Bayelsa</option>
+                    <option>Benue</option>
+                    <option>Borno</option>
+                    <option>Cross River</option>
+                    <option>Delta</option>
+                    <option>Ebonyi</option>
+                    <option>Edo</option>
+                    <option>Ekiti</option>
+                    <option>Enugu</option>
+                    <option>FCT Abuja</option>
+                    <option>Gombe</option>
+                    <option>Imo</option>
+                    <option>Jigawa</option>
+                    <option>Kaduna</option>
+                    <option>Kano</option>
+                    <option>Katsina</option>
+                    <option>Kebbi</option>
+                    <option>Kogi</option>
+                    <option>Kwara</option>
+                    <option>Lagos</option>
+                    <option>Nasarawa</option>
+                    <option>Niger</option>
+                    <option>Ogun</option>
+                    <option>Ondo</option>
+                    <option>Osun</option>
+                    <option>Oyo</option>
+                    <option>Plateau</option>
+                    <option>Rivers</option>
+                    <option>Sokoto</option>
+                    <option>Taraba</option>
+                    <option>Yobe</option>
+                    <option>Zamfara</option>
+                  </select>
+                  <p class="co-error" id="state-error"></p>
+                </div>
+              </div>
+
+              <div class="co-field">
+                <label for="note">Delivery note <span class="co-req">(optional)</span></label>
+                <textarea id="note" name="note" rows="3" placeholder="Landmark, gate colour, floor..."></textarea>
+              </div>
+
+              <!-- Google location (optional) -->
+              <div class="co-location">
+                <div>
+                  <h3>Help the rider find you</h3>
+                  <p class="co-hint" id="location-help">Optional. Share your Google location to pin your exact spot.
+                    Your typed address still counts.</p>
+                </div>
+
+                <button type="button" id="use-location" class="btn co-btn-location" aria-describedby="location-help">
+                  <svg class="co-pin" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M12 21s7-6.2 7-11.5A7 7 0 005 9.5C5 14.8 12 21 12 21z" />
+                    <circle cx="12" cy="9.5" r="2.5" />
+                  </svg>
+                  <span class="co-spinner" aria-hidden="true"></span>
+                  <span class="co-label">Use Google location</span>
+                </button>
+
+                <p id="location-status" class="co-loc-status" role="status"></p>
+
+                <div id="location-result" class="co-loc-result" hidden>
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M7.5 12.5l3 3 6-6.5" />
+                  </svg>
+                  <strong>Location added</strong>
+                  <a id="location-view" href="#" target="_blank" rel="noopener">View on Google Maps<span
+                      class="visually-hidden"> (opens in a new tab)</span></a>
+                  <button type="button" id="remove-location" class="btn-link">Remove<span class="visually-hidden">
+                      location</span></button>
+                </div>
+
+                <input type="hidden" id="location-link" name="location-link">
+              </div>
+            </fieldset>
+
+            <button type="submit" id="continue-btn" class="btn btn-block co-cta">
+              <span class="co-label">Continue to payment</span> <span id="continue-total" class="co-btn-total"></span>
+            </button>
+          </form>
+        </section>
+
+        <!-- ===== STEP 2: pay by bank transfer ===== -->
+        <section id="payment-section" class="co-panel co-step-panel" aria-labelledby="payment-heading" hidden>
+          <h2 id="payment-heading" tabindex="-1">Pay by bank transfer</h2>
+
+          <div class="co-amount-card">
+            <p class="co-amount-label">Amount to transfer</p>
+            <p id="transfer-amount" class="co-amount">&#8358;0</p>
+            <p class="co-amount-note">Send exactly this amount.</p>
+          </div>
+
+          <dl class="co-bank-list">
+            <div class="co-bank-row">
+              <dt>Bank</dt>
+              <dd id="bank-name">Bank name</dd>
+            </div>
+            <div class="co-bank-row">
+              <dt>Account number</dt>
+              <dd id="account-number">0000000000</dd>
+              <button type="button" class="co-copy" data-copy="account-number">
+                <span class="co-copy-label">Copy</span><span class="visually-hidden"> account number</span>
+              </button>
+            </div>
+            <div class="co-bank-row">
+              <dt>Account name</dt>
+              <dd id="account-name">Account name</dd>
+            </div>
+            <div class="co-bank-row">
+              <dt>Payment reference</dt>
+              <dd id="order-reference">SX-0000</dd>
+              <button type="button" class="co-copy" data-copy="order-reference">
+                <span class="co-copy-label">Copy</span><span class="visually-hidden"> payment reference</span>
+              </button>
+            </div>
+          </dl>
+
+          <p class="co-hint">Please put the payment reference in your transfer description so we can match your payment
+            quickly.</p>
+
+          <ol class="co-howto">
+            <li>Open your bank app.</li>
+            <li>Send the amount above to the account shown.</li>
+            <li>Come back here and tap the button below.</li>
+          </ol>
+
+          <button type="button" id="confirm-transfer" class="btn btn-block co-cta">
+            <span class="co-spinner" aria-hidden="true"></span>
+            <span class="co-label">I've made the transfer</span>
+          </button>
+          <button type="button" id="edit-details" class="btn-link co-back-details">&larr; Edit my details</button>
+        </section>
+
+      </div>
+
+      <!-- ===== ORDER SUMMARY ===== -->
+      <aside class="co-panel co-summary" aria-labelledby="summary-heading">
+        <h2 id="summary-heading">Order Summary <span id="summary-count" class="co-pill"></span></h2>
+        <ul id="summary-items" class="co-items"></ul>
+        <dl class="co-totals">
+          <div>
+            <dt>Subtotal</dt>
+            <dd id="co-subtotal">&#8358;0</dd>
+          </div>
+          <div>
+            <dt>Delivery</dt>
+            <dd id="co-delivery">&#8358;0</dd>
+          </div>
+          <div class="co-totals-final">
+            <dt>Total</dt>
+            <dd id="co-total">&#8358;0</dd>
+          </div>
+        </dl>
+      </aside>
+
+    </div>
+  </main>
+
+  <div id="status-message" class="visually-hidden" role="status" aria-live="polite"></div>
+
+  <!-- FOOTER (same as home, products and cart) -->
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div class="footer-col footer-brand">
+        <a class="brand-group" href="home.html">
+          <img class="logo" src="images/Logo white.png" alt="">
+          <span class="brand">Savory-X</span>
+        </a>
+        <p>Thoughtful essentials for your kitchen, home and workspace.</p>
+      </div>
+      <div class="footer-col">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="home.html">Home</a></li>
+          <li><a href="product.html">Products</a></li>
+          <li><a href="cart.html">Cart</a></li>
+          <li><a href="track.html">Track Order</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>Customer Support</h3>
+        <ul>
+          <li><a href="mailto:hello@savoryx.com">hello@savoryx.com</a></li>
+          <li><a href="https://wa.me/2340000000000">Chat on WhatsApp</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p><small>&copy; <span id="year">2026</span> Savory-X. All rights reserved.</small></p>
+      <button class="btn-link" id="shortcuts-btn" aria-haspopup="dialog">Keyboard Shortcuts</button>
+    </div>
+  </footer>
+
+  <!-- PAYMENT POPUP: "payment being confirmed", then "payment received" -->
+  <dialog id="payment-dialog" class="co-dialog" data-stage="sent" aria-labelledby="pay-title">
+    <div class="co-dialog-body">
+      <div class="co-pay-visual" aria-hidden="true">
+        <span class="co-pay-ring"></span>
+        <svg class="co-pay-icon co-pay-send" viewBox="0 0 24 24" focusable="false">
+          <path d="M22 2L11 13" />
+          <path d="M22 2l-7 20-4-9-9-4 20-7z" />
+        </svg>
+        <svg class="co-pay-icon co-pay-wallet" viewBox="0 0 24 24" focusable="false">
+          <rect x="3" y="6" width="18" height="13" rx="2.5" />
+          <path d="M3 10h18" />
+          <circle cx="16.5" cy="14.5" r="1.2" />
+        </svg>
+        <svg class="co-pay-icon co-pay-check" viewBox="0 0 24 24" focusable="false">
+          <path d="M5 12.5l4.5 4.5L19 7.5" />
+        </svg>
+      </div>
+
+      <!-- Screen readers hear this area change as the stages move on -->
+      <div class="co-pay-live" role="status" aria-live="polite">
+        <h2 id="pay-title" tabindex="-1">Sending your payment notice</h2>
+        <p id="pay-text">Telling the shop that you have made the transfer&hellip;</p>
+      </div>
+
+      <ol class="co-pay-steps">
+        <li class="is-current">
+          <span class="co-pay-dot" aria-hidden="true"></span>
+          <span>Notice sent to the shop <span class="visually-hidden co-pay-state">(in progress)</span></span>
+        </li>
+        <li>
+          <span class="co-pay-dot" aria-hidden="true"></span>
+          <span>Checking your payment <span class="visually-hidden co-pay-state">(waiting)</span></span>
+        </li>
+        <li>
+          <span class="co-pay-dot" aria-hidden="true"></span>
+          <span>Payment received <span class="visually-hidden co-pay-state">(waiting)</span></span>
+        </li>
+      </ol>
+
+      <p class="co-pay-ref">Order <strong id="pay-ref"></strong> &middot; <span id="pay-amount"></span></p>
+      <p id="pay-demo" class="co-pay-demo" hidden>Demo mode: this confirmation is simulated.</p>
+
+      <a id="payment-track" class="btn co-pay-track" href="track.html">Track my order</a>
+    </div>
+  </dialog>
+
+  <!-- SHORTCUTS MODAL -->
+  <dialog id="shortcuts-dialog" class="shortcuts-dialog" aria-labelledby="sc-title">
+    <div class="dialog-header">
+      <h2 id="sc-title">Keyboard Shortcuts</h2>
+      <button class="dialog-close" id="close-shortcuts" aria-label="Close">&times;</button>
+    </div>
+    <div class="dialog-content">
+      <h3>Checkout Page</h3>
+      <dl class="shortcut-list">
+        <div>
+          <dt><kbd>N</kbd></dt>
+          <dd>Continue to payment</dd>
+        </div>
+        <div>
+          <dt><kbd>B</kbd></dt>
+          <dd>Copy the account number</dd>
+        </div>
+        <div>
+          <dt><kbd>R</kbd></dt>
+          <dd>Copy the payment reference</dd>
+        </div>
+      </dl>
+      <h3>Every Page</h3>
+      <dl class="shortcut-list">
+        <div>
+          <dt><kbd>H</kbd></dt>
+          <dd>Go to Home page</dd>
+        </div>
+        <div>
+          <dt><kbd>P</kbd></dt>
+          <dd>Go to Products page</dd>
+        </div>
+        <div>
+          <dt><kbd>T</kbd></dt>
+          <dd>Go to Track order page</dd>
+        </div>
+        <div>
+          <dt><kbd>C</kbd></dt>
+          <dd>Go to Cart</dd>
+        </div>
+      </dl>
+    </div>
+  </dialog>
+</body>
+
+</html>

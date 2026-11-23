@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Savory-X | Kitchen, House and Workspace Accessories</title>
+    <meta name="description"
+        content="Shop kitchen, house and workspace accessories from Savory-X. Pay by bank transfer and track your order online.">
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="shortcuts.css">
+    <script src="home.js" defer></script>
+    <script src="shortcuts.js" defer></script>
+</head>
+
+<body data-page="home">
+
+    <!-- 1. THE HERO WRAPPER (Now purely background) -->
+    <div class="hero-wrap">
+        <!-- The header is now absolutely positioned OVER the image -->
+        <header class="site-header">
+            <a class="brand-group" href="home.html">
+                <img class="logo" src="images/logo.png" alt="">
+                <span class="brand">Savory-X</span>
+            </a>
+
+            <!-- Phones only: cart button in the top bar (hidden from 768px up) -->
+            <a class="header-cart" href="cart.html">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <circle cx="9" cy="20" r="1.5" />
+                    <circle cx="18" cy="20" r="1.5" />
+                    <path d="M2 3h3l2.5 12h11l2-8H6" />
+                </svg>
+                <span class="visually-hidden">Cart</span>
+                <span class="js-cart-count"></span><span class="visually-hidden"> items</span>
+            </a>
+
+            <nav class="site-nav" aria-label="Main">
+                <ul>
+                    <li>
+                        <a href="home.html" aria-current="page">
+                            <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                <path d="M3 11l9-8 9 8M5 10v10h14V10M10 20v-6h4v6" />
+                            </svg>
+                            <span class="nav-label">Home</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="product.html">
+                            <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                <path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" />
+                            </svg>
+                            <span class="nav-label">Products</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="track.html">
+                            <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                <path d="M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8M12 13v8" />
+                            </svg>
+                            <span class="nav-label">Track order</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="cart.html" class="cart-link">
+                            <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                <circle cx="9" cy="20" r="1.5" />
+                                <circle cx="18" cy="20" r="1.5" />
+                                <path d="M2 3h3l2.5 12h11l2-8H6" />
+                            </svg>
+                            <span class="nav-label">Cart</span>
+                            <span id="cart-count">0</span><span class="visually-hidden"> items</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+
+        <!-- HERO CONTENT: Sits below the floating nav -->
+        <section class="hero" aria-labelledby="hero-title">
+            <div class="hero-inner">
+                <div class="hero-text">
+                    <h1 id="hero-title">Little things.<br>Better living.</h1>
+                    <p>Thoughtful essentials for your kitchen, home and workspace.</p>
+                    <div class="hero-actions">
+                        <a class="btn" href="product.html">
+                            <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                <circle cx="9" cy="20" r="1.5" />
+                                <circle cx="18" cy="20" r="1.5" />
+                                <path d="M2 3h3l2.5 12h11l2-8H6" />
+                            </svg>
+                            <span>Shop now</span>
+                            <svg class="btn-chevron" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                <path d="M9 6l6 6-6 6" />
+                            </svg>
+                        </a>
+                        <!-- <a class="hero-link" href="product.html">Explore products
+                            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                <path d="M9 6l6 6-6 6" />
+                            </svg>
+                        </a> -->
+                    </div>
+                </div> 
+            </div>
+            <!-- Decorative carousel dots -->
+            <div class="hero-dots" aria-hidden="true">
+                <span class="is-active"></span>
+                <span class="is-active"></span>
+                <span class="is-active"></span>
+            </div>
+        </section>
+    </div>
+
+    <main id="main" tabindex="-1">
+        <!-- Featured Products & How it works remain unchanged -->
+        <section class="featured" aria-labelledby="featured-title">
+            <p class="eyebrow"><span class="rule" aria-hidden="true"></span>Everyday favourites<span class="rule"
+                    aria-hidden="true"></span></p>
+            <h2 id="featured-title" class="section-title">Featured products</h2>
+            <ul id="featured-products" class="product-grid">
+                <li class="product-card">
+                    <article>
+                        <div class="card-media">
+                            <img src="https://i.pinimg.com/1200x/29/a6/a5/29a6a5bb85f5fbaf287855a699ac66e1.jpg" alt="Ceramic mug" width="400" height="400" loading="lazy">
+                        </div>
+                        <div class="card-body">
+                            <h3>Ceramic Mug</h3>
+                            <div class="card-bottom">
+                                <!-- <p class="price">&#8358;4,500</p> -->
+                                <button class="cart-fab" type="button" data-add="1"
+                                    aria-label="Add Ceramic Mug to cart">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                        <circle cx="9" cy="20" r="1.5" />
+                                        <circle cx="18" cy="20" r="1.5" />
+                                        <path d="M2 3h3l2.5 12h11l2-8H6" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <a class="card-link" href="product.html?id=1" aria-label="View Ceramic Mug"></a>
+                    </article>
+                </li>
+
+                <li class="product-card">
+                    <article>
+                        <div class="card-media">
+                            <img src="https://i.pinimg.com/736x/00/88/53/00885380e590d38cb6f4a823abfb6e3f.jpg" alt="Ceramic mug" width="400" height="400" loading="lazy">
+                        </div>
+                        <div class="card-body">
+                            <h3>Desk Organizer</h3>
+                            <div class="card-bottom">
+                                <!-- <p class="price">&#8358;4,500</p> -->
+                                <button class="cart-fab" type="button" data-add="1"
+                                    aria-label="Add Desk Organizer to cart">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                        <circle cx="9" cy="20" r="1.5" />
+                                        <circle cx="18" cy="20" r="1.5" />
+                                        <path d="M2 3h3l2.5 12h11l2-8H6" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <a class="card-link" href="product.html?id=1" aria-label="View Desk Organizer"></a>
+                    </article>
+                </li>
+
+                <li class="product-card">
+                    <article>
+                        <div class="card-media">
+                            <img src="https://i.pinimg.com/736x/34/5a/96/345a96f1b9d73adef9f5309cc3758ba9.jpg" alt="Ceramic mug" width="400" height="400" loading="lazy">
+                        </div>
+                        <div class="card-body">
+                            <h3>Key Holder</h3>
+                            <div class="card-bottom">
+                                <!-- <p class="price">&#8358;4,500</p> -->
+                                <button class="cart-fab" type="button" data-add="1"
+                                    aria-label="Add Key Holder to cart">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                        <circle cx="9" cy="20" r="1.5" />
+                                        <circle cx="18" cy="20" r="1.5" />
+                                        <path d="M2 3h3l2.5 12h11l2-8H6" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <a class="card-link" href="product.html?id=1" aria-label="View Key Holder"></a>
+                    </article>
+                </li>
+            </ul>
+
+            <div class="featured-cta">
+                <a class="btn btn-outline" href="products.html">
+                    View all products
+                    <svg class="btn-chevron" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path d="M9 6l6 6-6 6" />
+                    </svg>
+                </a>
+            </div>
+        </section>
+
+        <section class="how-it-works" aria-labelledby="how-title">
+            <div class="how-panel">
+                <p class="eyebrow eyebrow-blue"><span class="rule" aria-hidden="true"></span>A simpler way to
+                    shop<span class="rule" aria-hidden="true"></span></p>
+                <h2 id="how-title" class="section-title">How It Works</h2>
+                <p class="how-sub">Shop in 3 easy steps</p>
+
+                <ol class="steps-list">
+                    <li>
+                        <span class="step-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="11" cy="11" r="7" />
+                                <path d="M21 21l-4.5-4.5" />
+                            </svg>
+                        </span>
+                        <span class="step-num">1. Browse</span>
+                        <span class="step-caption">Find what you love</span>
+                    </li>
+                    <li>
+                        <span class="step-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="9" cy="20" r="1.5" />
+                                <circle cx="18" cy="20" r="1.5" />
+                                <path d="M2 3h3l2.5 12h11l2-8H6" />
+                            </svg>
+                        </span>
+                        <span class="step-num">2. Order</span>
+                        <span class="step-caption">Add to cart &amp; checkout</span>
+                    </li>
+                    <li>
+                        <span class="step-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8M12 13v8" />
+                            </svg>
+                        </span>
+                        <span class="step-num">3. Enjoy</span>
+                        <span class="step-caption">Get it delivered</span>
+                    </li>
+                </ol>
+            </div>
+        </section>
+    </main>
+
+    <div id="status-message" class="visually-hidden" role="status" aria-live="polite"></div>
+</body>
+
+</html>

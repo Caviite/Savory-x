@@ -1,0 +1,78 @@
+<!-- ==========================================================
+     Savory-X: product detail popup (markup)
+
+     This is NOT a separate page. The popup opens on the Products
+     page when a customer clicks a product card.
+
+     HOW TO ADD IT TO product.html
+     1. In <head>, add the stylesheet AFTER product.css and shortcuts.css:
+          <link rel="stylesheet" href="product detail.css">
+     2. In <head>, add the script AFTER product.js (it needs window.SavoryX):
+          <script src="product detail.js" defer></script>
+     3. Paste the <dialog> below into <body>, just before the
+         SHORTCUTS MODAL -->
+
+<dialog id="pd-dialog" class="pd-dialog" aria-labelledby="pd-name" aria-describedby="pd-description">
+
+  <div class="pd-grip" aria-hidden="true"></div>
+
+  <button class="pd-close" id="pd-close" type="button" aria-label="Close product details">
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M6 6l12 12M18 6L6 18" />
+    </svg>
+  </button>
+
+  <div class="pd-scroll" id="pd-scroll">
+
+    <!-- PRODUCT -->
+    <div class="pd-body" id="pd-body">
+      <div class="pd-media">
+        <img id="pd-image" src="images/placeholder.jpg" alt="" width="800" height="800" decoding="async">
+      </div>
+
+      <div class="pd-info">
+        <p class="pd-category" id="pd-category"></p>
+        <h2 id="pd-name" tabindex="-1"></h2>
+        <p class="pd-price" id="pd-price"></p>
+        <p class="pd-description" id="pd-description"></p>
+
+        <div class="pd-buy">
+          <div class="pd-qty" role="group" aria-label="Quantity">
+            <button type="button" id="pd-minus" aria-label="Decrease quantity">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M5 12h14" />
+              </svg>
+            </button>
+            <input id="pd-qty" type="number" inputmode="numeric" min="1" max="10" value="1" aria-label="Quantity">
+            <button type="button" id="pd-plus" aria-label="Increase quantity">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M12 5v14M5 12h14" />
+              </svg>
+            </button>
+          </div>
+
+          <button class="btn pd-add" id="pd-add" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <circle cx="9" cy="20" r="1.5" />
+              <circle cx="18" cy="20" r="1.5" />
+              <path d="M2 3h3l2.5 12h11l2-8H6" />
+            </svg>
+            <span id="pd-add-label">Add to cart</span>
+          </button>
+        </div>
+
+        <div class="pd-feedback-row">
+          <p class="pd-feedback" id="pd-feedback" role="status"></p>
+          <a class="pd-cart-link" id="pd-cart-link" href="cart.html" hidden>View cart</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- RELATED (product detail.js fills this list) -->
+    <section class="pd-related" id="pd-related-section" aria-labelledby="pd-related-title">
+      <h3 id="pd-related-title">You may also like</h3>
+      <ul id="pd-related"></ul>
+    </section>
+
+  </div>
+</dialog>

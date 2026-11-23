@@ -1,0 +1,143 @@
+/* ==========================================================
+   Savory-X: shortcuts.css
+   Styles for the keyboard shortcut labels, the help window and
+   the "chosen card" outline. Load it after style.css / index.css.
+   ========================================================== */
+
+/* ---------- Key labels next to buttons ----------
+   Phones have no keyboard, so the labels only show from 768px up. */
+.key-hint {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .key-hint {
+        display: inline-block;
+        margin-left: 0.5rem;
+        padding: 0 0.4rem;
+        font-family: var(--font-body);
+        font-size: 0.75rem;
+        font-weight: var(--weight-semibold);
+        line-height: 1.5;
+        border: 1px solid currentColor;
+        border-radius: 4px;
+        opacity: 0.85;
+    }
+
+    /* When shortcuts are switched off, hide the labels too */
+    .shortcuts-off .key-hint {
+        display: none;
+    }
+}
+
+/* ---------- Footer button that opens the help window ---------- */
+.shortcuts-link {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .shortcuts-link {
+        display: block;
+    }
+}
+
+/* A button that looks like a link (also used for "Remove" in the cart) */
+.btn-link {
+    display: inline-block;
+    padding: 0.4rem 0;
+    font: inherit;
+    font-weight: var(--weight-semibold);
+    color: var(--brown-700);
+    text-align: left;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    background: none;
+    border: 0;
+    cursor: pointer;
+}
+
+.site-footer .btn-link {
+    color: var(--white);
+}
+
+/* ---------- The "chosen" product or cart item ----------
+   Shows which card the arrow keys have picked. */
+.product-card:focus-within article,
+.cart-item:focus-within {
+    border-color: var(--blue-600);
+    box-shadow: 0 0 0 3px var(--blue-100);
+}
+
+/* ---------- Help window ---------- */
+.shortcuts-dialog {
+    width: min(34rem, calc(100% - 2rem));
+    max-height: 85vh;
+    padding: 1.5rem;
+    overflow: auto;
+    color: var(--brown-900);
+    background: var(--white);
+    border: 2px solid var(--grey-300);
+    border-radius: 12px;
+}
+
+.shortcuts-dialog::backdrop {
+    background: rgba(59, 42, 29, 0.6);
+}
+
+.shortcuts-dialog h2 {
+    margin-bottom: 0.5rem;
+}
+
+.shortcuts-dialog h3 {
+    margin: 1.25rem 0 0.25rem;
+    font-size: 1.05rem;
+}
+
+.shortcut-list {
+    margin: 0;
+}
+
+.shortcut-list div {
+    display: grid;
+    grid-template-columns: 6.5rem 1fr;
+    gap: 0.75rem;
+    align-items: center;
+    padding-block: 0.5rem;
+    border-bottom: 1px solid var(--grey-100);
+}
+
+.shortcut-list dt,
+.shortcut-list dd {
+    margin: 0;
+}
+
+.key-cap {
+    display: inline-block;
+    min-width: 2rem;
+    padding: 0.1rem 0.5rem;
+    font-family: var(--font-body);
+    font-weight: var(--weight-semibold);
+    text-align: center;
+    background: var(--grey-50);
+    border: 1px solid var(--grey-600);
+    border-bottom-width: 3px;
+    border-radius: 6px;
+}
+
+.shortcuts-switch {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 1.25rem 0;
+    font-weight: var(--weight-semibold);
+}
+
+.shortcuts-switch input {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.shortcuts-actions {
+    display: flex;
+    justify-content: flex-end;
+}

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>All Products | Savory-X</title>
+    <meta name="description"
+        content="Explore kitchen, home and workspace accessories from Savory-X. Filter, search and find exactly what you need.">
+    <link rel="stylesheet" href="product.css">
+    <link rel="stylesheet" href="shortcuts.css">
+    <link rel="stylesheet" href="product detail.css">
+    <script src="product.js" defer></script>
+    <script src="product detail.js" defer></script>
+    <script src="shortcuts.js" defer></script>
+</head>
+
+<body data-page="products">
+    <!-- <a class="skip-link" href="#main">Skip to main content</a> -->
+
+    <!-- FLOATING HEADER -->
+    <header class="site-header">
+        <a class="brand-group" href="home.html">
+            <img class="logo" src="images/logo.png" alt="" width="32" height="32">
+            <span class="brand">Savory-X</span>
+        </a>
+
+        <nav class="site-nav" aria-label="Main">
+            <ul>
+                <li>
+                    <a href="home.html">
+                        <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <path d="M3 11l9-8 9 8M5 10v10h14V10M10 20v-6h4v6" />
+                        </svg>
+                        <span class="nav-label">Home</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="products.html" aria-current="page">
+                        <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" />
+                        </svg>
+                        <span class="nav-label">Products</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="track.html">
+                        <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <path d="M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8M12 13v8" />
+                        </svg>
+                        <span class="nav-label">Track order</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="cart.html">
+                        <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <circle cx="9" cy="20" r="1.5" />
+                            <circle cx="18" cy="20" r="1.5" />
+                            <path d="M2 3h3l2.5 12h11l2-8H6" />
+                        </svg>
+                        <span class="nav-label">Cart</span>
+                        <span id="cart-count">0</span><span class="visually-hidden"> items</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main id="main" tabindex="-1">
+
+        <!-- PAGE INTRO -->
+        <section class="page-intro" aria-labelledby="page-title">
+            <h1 id="page-title" class="typewriter-title">
+                All Products <span class="count-badge" id="product-count-badge">(0)</span>
+            </h1>
+            <p>Explore thoughtful essentials for your kitchen, home and workspace.</p>
+        </section>
+
+        <!-- CONTROLS -->
+        <section class="controls-section" aria-label="Filter and search products">
+            <div class="controls-top">
+                <div class="search-wrap">
+                    <label for="search" class="visually-hidden">Search products</label>
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <circle cx="11" cy="11" r="7" />
+                        <path d="M21 21l-4.3-4.3" />
+                    </svg>
+                    <input type="search" id="search" placeholder="Search products..." autocomplete="off">
+                </div>
+                <button class="btn-clear" id="clear-filters" type="button" hidden>
+                    Clear filters
+                </button>
+            </div>
+
+            <div class="controls-bottom">
+                <div class="filters-wrap">
+                    <span class="visually-hidden">Categories</span>
+                    <div class="filter-tabs" role="group" aria-label="Filter by category">
+                        <button class="filter-btn is-active" data-filter="all" aria-pressed="true">All Products</button>
+                        <button class="filter-btn" data-filter="kitchen" aria-pressed="false">Kitchen</button>
+                        <button class="filter-btn" data-filter="house" aria-pressed="false">Home</button>
+                        <button class="filter-btn" data-filter="workspace" aria-pressed="false">Workspace</button>
+                    </div>
+                </div>
+
+                <div class="sort-wrap">
+                    <label for="sort" class="sort-label">Sort by:</label>
+                    <div class="select-container">
+                        <select id="sort" aria-label="Sort products">
+                            <option value="default">Featured</option>
+                            <option value="price-asc">Price: Low to High</option>
+                            <option value="price-desc">Price: High to Low</option>
+                            <option value="name-asc">Name: A to Z</option>
+                        </select>
+                        <svg class="select-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <path d="M6 9l6 6 6-6" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PRODUCT GRID -->
+        <section class="products-section" aria-label="Products">
+            <p id="results-count" class="results-count" aria-live="polite">Showing all products</p>
+
+            <ul id="product-grid" class="product-grid">
+                <!-- JS renders products here -->
+            </ul>
+
+            <div id="empty-state" class="empty-state" hidden>
+                <h2>Nothing found</h2>
+                <p>We couldn't find any products matching your search or filters.</p>
+                <button class="btn" onclick="document.getElementById('clear-filters').click()">Clear all
+                    filters</button>
+            </div>
+        </section>
+
+    </main>
+
+    <div id="status-message" class="visually-hidden" role="status" aria-live="polite"></div>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+        <div class="footer-grid">
+            <div class="footer-col footer-brand">
+                <a class="brand-group" href="home.html">
+                    <img class="logo" src="images/Logo white.png" alt="">
+                    <span class="brand">Savory-X</span>
+                </a>
+                <p>Thoughtful essentials for your kitchen, home and workspace.</p>
+            </div>
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="home.html">Home</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="track.html">Track Order</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Customer Support</h3>
+                <ul>
+                    <li><a href="mailto:hello@savoryx.com">hello@savoryx.com</a></li>
+                    <li><a href="https://wa.me/2340000000000">Chat on WhatsApp</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p><small>&copy; <span id="year">2026</span> Savory-X. All rights reserved.</small></p>
+            <button class="btn-link" id="shortcuts-btn" aria-haspopup="dialog">Keyboard Shortcuts</button>
+        </div>
+    </footer>
+
+    <dialog id="pd-dialog" class="pd-dialog" aria-labelledby="pd-name" aria-describedby="pd-description">
+
+        <div class="pd-grip" aria-hidden="true"></div>
+
+        <button class="pd-close" id="pd-close" type="button" aria-label="Close product details">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M6 6l12 12M18 6L6 18" />
+            </svg>
+        </button>
+
+        <div class="pd-scroll" id="pd-scroll">
+
+            <!-- PRODUCT -->
+            <div class="pd-body" id="pd-body">
+                <div class="pd-media">
+                    <img id="pd-image" src="images/placeholder.jpg" alt="" width="800" height="800" decoding="async">
+                </div>
+
+                <div class="pd-info">
+                    <p class="pd-category" id="pd-category"></p>
+                    <h2 id="pd-name" tabindex="-1"></h2>
+                    <p class="pd-price" id="pd-price"></p>
+                    <p class="pd-description" id="pd-description"></p>
+
+                    <div class="pd-buy">
+                        <div class="pd-qty" role="group" aria-label="Quantity">
+                            <button type="button" id="pd-minus" aria-label="Decrease quantity">
+                                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                    <path d="M5 12h14" />
+                                </svg>
+                            </button>
+                            <input id="pd-qty" type="number" inputmode="numeric" min="1" max="10" value="1"
+                                aria-label="Quantity">
+                            <button type="button" id="pd-plus" aria-label="Increase quantity">
+                                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                    <path d="M12 5v14M5 12h14" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <button class="btn pd-add" id="pd-add" type="button">
+                            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                <circle cx="9" cy="20" r="1.5" />
+                                <circle cx="18" cy="20" r="1.5" />
+                                <path d="M2 3h3l2.5 12h11l2-8H6" />
+                            </svg>
+                            <span id="pd-add-label">Add to cart</span>
+                        </button>
+                    </div>
+
+                    <div class="pd-feedback-row">
+                        <p class="pd-feedback" id="pd-feedback" role="status"></p>
+                        <a class="pd-cart-link" id="pd-cart-link" href="cart.html" hidden>View cart</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RELATED (product detail.js fills this list) -->
+            <section class="pd-related" id="pd-related-section" aria-labelledby="pd-related-title">
+                <h3 id="pd-related-title">You may also like</h3>
+                <ul id="pd-related"></ul>
+            </section>
+
+        </div>
+    </dialog>
+
+    <!-- SHORTCUTS MODAL -->
+    <dialog id="shortcuts-dialog" class="shortcuts-dialog" aria-labelledby="sc-title">
+        <div class="dialog-header">
+            <h2 id="sc-title">Keyboard Shortcuts</h2>
+            <button class="dialog-close" id="close-shortcuts" aria-label="Close">&times;</button>
+        </div>
+        <div class="dialog-content">
+            <h3>Products Page</h3>
+            <dl class="shortcut-list">
+                <div>
+                    <dt><kbd>/</kbd></dt>
+                    <dd>Jump to search box</dd>
+                </div>
+                <div>
+                    <dt><kbd>F</kbd></dt>
+                    <dd>Jump to category filters</dd>
+                </div>
+                <div>
+                    <dt><kbd>O</kbd></dt>
+                    <dd>Jump to sort menu</dd>
+                </div>
+                <div>
+                    <dt><kbd>X</kbd></dt>
+                    <dd>Clear all filters</dd>
+                </div>
+            </dl>
+            <h3>Every Page</h3>
+            <dl class="shortcut-list">
+                <div>
+                    <dt><kbd>H</kbd></dt>
+                    <dd>Go to Home page</dd>
+                </div>
+                <div>
+                    <dt><kbd>P</kbd></dt>
+                    <dd>Go to Products page</dd>
+                </div>
+                <div>
+                    <dt><kbd>T</kbd></dt>
+                    <dd>Go to Track order page</dd>
+                </div>
+                <div>
+                    <dt><kbd>C</kbd></dt>
+                    <dd>Go to Cart</dd>
+                </div>
+            </dl>
+        </div>
+    </dialog>
+</body>
+
+</html>
