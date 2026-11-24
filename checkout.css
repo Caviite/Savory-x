@@ -1167,6 +1167,16 @@
 }
 
 /* ---------- Tablet (768px and up) ---------- */
+@media (max-width: 767px) {
+    .footer-co{
+        display: none;
+    }
+
+    .btn-link{
+        display: none;
+    }
+}
+
 @media (min-width: 768px) {
     .co-panel {
         padding: 1.75rem;

@@ -11,8 +11,9 @@
       The time of every step is saved, so if the customer closes the
       page and comes back, the order has moved on as it should.
    3. It draws the timeline, the details and the Google Map route.
-   4. Once the order is delivered, it is shown for a short while
-      and then it no longer appears on this page.
+   4. Once the order is delivered, the page says "Order delivered" and
+      shows a summary. Two hours after delivery, every delivered order
+      is deleted automatically.
    ========================================================== */
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -41,8 +42,13 @@ document.addEventListener('DOMContentLoaded', function () {
         'delivered': 15000
     };
 
-    // After delivery, the order stays on the page this long, then it clears.
-    var DELIVERED_SHOW_MS = 10000;
+    // A delivered order stays on the page for 2 hours. After that, every
+    // delivered order is deleted.
+    var DELIVERED_KEEP_MS = 2 * 60 * 60 * 1000;
+
+    // The map uses the Google location pin only if it is this accurate (in metres).
+    // A rougher pin often points to the wrong street, so the typed address is used instead.
+    var PIN_MAX_ACCURACY_M = 200;
 
     // The six steps, in order
     var STATUSES = ['order-placed', 'awaiting-payment', 'payment-confirmed', 'packed', 'out-for-delivery', 'delivered'];
@@ -59,7 +65,6 @@ document.addEventListener('DOMContentLoaded', function () {
     var emptyBox = byId('track-empty');
     var content = byId('track-content');
     var hero = byId('tk-hero');
-    var orderHeading = byId('order-heading');
     var steps = byId('timeline').querySelectorAll('.tk-step');
     var routeFill = byId('route-fill');
     var routeTruck = byId('route-truck');
@@ -95,14 +100,6 @@ document.addEventListener('DOMContentLoaded', function () {
         try { localStorage.setItem(ORDERS_KEY, JSON.stringify(list)); } catch (error) { /* ignore */ }
     }
 
-    function findOrder(ref) {
-        var list = readOrders();
-        for (var i = 0; i < list.length; i++) {
-            if (list[i].ref === ref) { return list[i]; }
-        }
-        return null;
-    }
-
     function stepIndex(status) { return STATUSES.indexOf(status); }
 
     // The time (in ms) a step was reached, or 0 if it was not reached yet
@@ -125,14 +122,6 @@ document.addEventListener('DOMContentLoaded', function () {
         return phone.length === 11 ? phone.slice(0, 4) + ' ' + phone.slice(4, 7) + ' ' + phone.slice(7) : phone;
     }
 
-    function cleanPhone(value) {
-        var digits = value.replace(/[\s\-().]/g, '');
-        if (/^\+234\d{10}$/.test(digits)) { return '0' + digits.slice(4); }
-        if (/^234\d{10}$/.test(digits)) { return '0' + digits.slice(3); }
-        if (/^0\d{10}$/.test(digits)) { return digits; }
-        return '';
-    }
-
     function fullAddress(order) {
         var a = order.address;
         return a.street + ', ' + a.city + ', ' + a.state;
@@ -148,14 +137,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /* ---------- 3. THE "SYSTEM": MOVE THE ORDER FORWARD ---------- */
 
-    // Moves the order to every step that is already due. Returns the order.
-    function catchUp(ref) {
-        var list = readOrders();
-        var order = null;
-        for (var i = 0; i < list.length; i++) {
-            if (list[i].ref === ref) { order = list[i]; break; }
-        }
-        if (!order) { return null; }
+    // Moves one order to every step that is already due. Returns true if it moved.
+    function advance(order) {
         if (!order.history) { order.history = []; }
 
         var changed = false;
@@ -168,16 +151,50 @@ document.addEventListener('DOMContentLoaded', function () {
             order.history.push({ status: next, at: new Date(due).toISOString() });
             changed = true;
         }
+        return changed;
+    }
 
-        if (changed) { writeOrders(list); }
+    // Finds one order and moves it forward. Returns the order (or null).
+    function catchUp(ref) {
+        var list = readOrders();
+        var order = null;
+        for (var i = 0; i < list.length; i++) {
+            if (list[i].ref === ref) { order = list[i]; break; }
+        }
+        if (!order) { return null; }
+
+        if (advance(order)) { writeOrders(list); }
         return order;
     }
 
-    // Is this order still meant to be shown? (Delivered orders clear after a while.)
+    // When was the order delivered?
+    function deliveredAt(order) {
+        return timeOf(order, 'delivered') || lastTime(order);
+    }
+
+    // Deletes every delivered order that is more than 2 hours past delivery.
+    // Orders nobody opened are moved on to their real step first, so they count too.
+    function purgeDelivered() {
+        var list = readOrders();
+        var kept = [];
+        var changed = false;
+
+        list.forEach(function (order) {
+            if (advance(order)) { changed = true; }
+            if (order.status === 'delivered' && Date.now() >= deliveredAt(order) + DELIVERED_KEEP_MS) {
+                changed = true;      // leave this one out: it is deleted
+                return;
+            }
+            kept.push(order);
+        });
+
+        if (changed) { writeOrders(kept); }
+    }
+
+    // Is this order still meant to be shown?
     function isVisible(order) {
         if (order.status !== 'delivered') { return true; }
-        var deliveredAt = timeOf(order, 'delivered') || lastTime(order);
-        return Date.now() < deliveredAt + DELIVERED_SHOW_MS;
+        return Date.now() < deliveredAt(order) + DELIVERED_KEEP_MS;
     }
 
     function forgetCurrent(ref) {
@@ -202,12 +219,18 @@ document.addEventListener('DOMContentLoaded', function () {
         content.hidden = false;
     }
 
-    // The route map. It uses the Google location if the customer shared one,
-    // and the typed address if not.
+    // Should the map use the Google location pin from checkout?
+    // Yes if the customer shared one and it is accurate enough (an older order
+    // with no accuracy saved is trusted). If not, the typed address is used.
+    function usePin(order) {
+        var loc = order.location;
+        if (!loc || !loc.lat || !loc.lng) { return false; }
+        if (typeof loc.accuracy === 'number' && loc.accuracy > PIN_MAX_ACCURACY_M) { return false; }
+        return true;
+    }
+
     function mapDestination(order) {
-        if (order.location && order.location.lat && order.location.lng) {
-            return order.location.lat + ',' + order.location.lng;
-        }
+        if (usePin(order)) { return order.location.lat + ',' + order.location.lng; }
         return fullAddress(order) + ', Nigeria';
     }
 
@@ -221,9 +244,18 @@ document.addEventListener('DOMContentLoaded', function () {
             '&destination=' + encodeURIComponent(to);
 
         byId('route-from').textContent = SHOP.label;
-        byId('route-to').textContent = order.location
-            ? fullAddress(order) + ' (Google location pinned)'
-            : fullAddress(order);
+        byId('route-to').textContent = fullAddress(order);
+
+        // Tell the customer which one the map is using
+        var source;
+        if (usePin(order)) {
+            source = 'The map is pinned to the Google location you shared at checkout.';
+        } else if (order.location) {
+            source = 'The Google location you shared was not exact enough, so the map uses your typed address.';
+        } else {
+            source = 'The map uses the address you typed at checkout.';
+        }
+        byId('map-source').textContent = source;
     }
 
     // Details that never change: filled once per order
@@ -324,6 +356,23 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // Once delivered: show the "Order delivered" summary instead of the map
+    function drawDelivered(order, isDelivered) {
+        byId('delivered-card').hidden = !isDelivered;
+        byId('map-card').hidden = isDelivered;
+        if (!isDelivered) { return; }
+
+        var at = deliveredAt(order);
+        var count = 0;
+        order.items.forEach(function (item) { count += item.qty; });
+
+        byId('done-when').textContent = 'Delivered on ' + formatWhen(at);
+        byId('done-to').textContent = fullAddress(order);
+        byId('done-items').textContent = count + (count === 1 ? ' item' : ' items');
+        byId('done-total').textContent = money(order.total);
+        byId('done-clear').textContent = formatClock(at + DELIVERED_KEEP_MS);
+    }
+
     // The parts that change with every step
     function drawProgress(order, isUpdate) {
         var index = stepIndex(order.status);
@@ -345,10 +394,13 @@ document.addEventListener('DOMContentLoaded', function () {
             li.querySelector('.tk-time').textContent = at && (isDone || isCurrent) ? formatClock(at) : '';
         });
 
-        var title = steps[index].querySelector('h3').textContent;
+        var title = allDone ? 'Order delivered' : steps[index].querySelector('h3').textContent;
         byId('status-badge').textContent = title;
-        byId('status-note').textContent = steps[index].querySelector('.tk-step-note').textContent;
+        byId('status-note').textContent = allDone
+            ? 'Your order was delivered on ' + formatWhen(deliveredAt(order)) + '. Thank you for shopping with Savory-X!'
+            : steps[index].querySelector('.tk-step-note').textContent;
         hero.classList.toggle('is-delivered', allDone);
+        drawDelivered(order, allDone);
 
         var movedForward = isUpdate && shownIndex !== -1 && index > shownIndex;
         moveTruck(order, index, movedForward);
@@ -359,19 +411,20 @@ document.addEventListener('DOMContentLoaded', function () {
             li.classList.add('is-new');
             setTimeout(function () { li.classList.remove('is-new'); }, 900);
             announce(allDone
-                ? 'Delivered. Your order has arrived.'
+                ? 'Order delivered. Your order has arrived.'
                 : 'Order update: ' + title + '. ' + steps[index].querySelector('.tk-step-note').textContent);
         }
         shownIndex = index;
     }
 
-    // The order has been delivered and its time on this page is over
+    // Two hours have passed since delivery: delete the delivered orders and clear the page
     function leaveOrder(ref) {
         content.classList.add('is-leaving');
         setTimeout(function () {
+            purgeDelivered();
             forgetCurrent(ref);
             showEmpty();
-            announce('Your order has been delivered. It is no longer shown here.');
+            announce('Your delivered order has been removed from this page.');
         }, 600);
     }
 
@@ -384,7 +437,7 @@ document.addEventListener('DOMContentLoaded', function () {
             var due = lastTime(order) + (DELAYS[STATUSES[index + 1]] || 0);
             timer = setTimeout(function () { load(true); }, Math.max(due - Date.now(), 0) + 30);
         } else {
-            var clearAt = (timeOf(order, 'delivered') || lastTime(order)) + DELIVERED_SHOW_MS;
+            var clearAt = deliveredAt(order) + DELIVERED_KEEP_MS;
             timer = setTimeout(function () { leaveOrder(order.ref); }, Math.max(clearAt - Date.now(), 0));
         }
     }
@@ -397,11 +450,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function load(isUpdate) {
+        purgeDelivered();                     // delete delivered orders older than 2 hours
+
         var ref = activeRef();
         var order = ref ? catchUp(ref) : null;
 
         if (!order || !isVisible(order)) {
-            if (order) { forgetCurrent(order.ref); }
+            if (ref) { forgetCurrent(ref); }
             showEmpty();
             return;
         }
@@ -458,56 +513,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    /* ---------- 6. FIND AN ORDER (when none is showing) ---------- */
-    var lookupForm = byId('lookup-form');
-    var lookupNumber = byId('lookup-number');
-    var lookupPhone = byId('lookup-phone');
-    var lookupError = byId('lookup-error');
-
-    function lookupFail(message, field) {
-        lookupError.textContent = 'Error: ' + message;
-        lookupNumber.removeAttribute('aria-invalid');
-        lookupPhone.removeAttribute('aria-invalid');
-        if (field) { field.setAttribute('aria-invalid', 'true'); field.focus(); }
-    }
-
-    // Accepts SX-1001, sx 1001, #SX-1001 or just 1001
-    function cleanRef(value) {
-        var text = value.trim().toUpperCase().replace(/^#/, '').replace(/\s+/g, '');
-        if (/^\d+$/.test(text)) { text = 'SX-' + text; }
-        if (/^SX\d+$/.test(text)) { text = 'SX-' + text.slice(2); }
-        return text;
-    }
-
-    lookupForm.addEventListener('submit', function (event) {
-        event.preventDefault();
-        lookupError.textContent = '';
-
-        var ref = cleanRef(lookupNumber.value);
-        var phone = cleanPhone(lookupPhone.value);
-
-        if (ref === '') { lookupFail('Enter your order number.', lookupNumber); return; }
-        if (phone === '') { lookupFail('Enter the phone number you used when you ordered.', lookupPhone); return; }
-
-        var order = catchUp(ref);
-        if (!order || order.customer.phone !== phone || !isVisible(order)) {
-            lookupFail('We could not find an active order with those details. Please check them and try again. Delivered orders are no longer shown.', lookupNumber);
-            return;
-        }
-
-        try { localStorage.setItem(CURRENT_KEY, order.ref); } catch (error) { /* ignore */ }
-        // If the page was opened with ?ref=..., drop it so the order found here is the one shown
-        if (window.location.search && window.history && window.history.replaceState) {
-            window.history.replaceState(null, '', window.location.pathname);
-        }
-        lookupNumber.value = '';
-        lookupPhone.value = '';
-        load(false);
-        orderHeading.focus();
-        announce('Order ' + order.ref + ' found.');
-    });
-
-    /* ---------- 7. KEEP IN SYNC ---------- */
+    /* ---------- 6. KEEP IN SYNC ---------- */
     // The order changed in another tab
     window.addEventListener('storage', function (event) {
         if (event.key === ORDERS_KEY || event.key === CURRENT_KEY || event.key === null) { load(true); }

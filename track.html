@@ -81,25 +81,9 @@
       <svg class="tk-empty-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
         <path d="M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8M12 13v8" />
       </svg>
-      <h2 id="empty-title" tabindex="-1">No active order</h2>
-      <p>Enter your order number and phone number to find your order.</p>
-
-      <form id="lookup-form" class="tk-lookup" novalidate>
-        <div class="tk-field">
-          <label for="lookup-number">Order number</label>
-          <input type="text" id="lookup-number" name="order-number" placeholder="SX-1001" autocomplete="off"
-            aria-describedby="lookup-error">
-        </div>
-        <div class="tk-field">
-          <label for="lookup-phone">Phone number</label>
-          <input type="tel" id="lookup-phone" name="phone" inputmode="tel" autocomplete="tel"
-            placeholder="0801 234 5678" aria-describedby="lookup-error">
-        </div>
-        <p id="lookup-error" class="tk-error" role="alert"></p>
-        <button type="submit" class="btn tk-btn-block">Find my order</button>
-      </form>
-
-      <a class="tk-quiet-link" href="product.html">Or start shopping</a>
+      <h2 id="empty-title" tabindex="-1">No order to track</h2>
+      <p>When you place an order, you can follow it here from our shop to your door.</p>
+      <a class="btn tk-btn-block" href="product.html">Start Shopping</a>
     </section>
 
     <!-- ============ ACTIVE ORDER ============ -->
@@ -255,7 +239,38 @@
       <!-- Right column: map, details, items, help -->
       <div class="tk-col">
 
-        <section class="tk-card" aria-labelledby="map-heading">
+        <!-- Shown instead of the map once the order is delivered -->
+        <section id="delivered-card" class="tk-card tk-done" aria-labelledby="done-heading" hidden>
+          <div class="tk-done-top">
+            <span class="tk-done-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M5 12.5l4.5 4.5L19 7.5" />
+              </svg>
+            </span>
+            <div>
+              <h2 id="done-heading">Order delivered</h2>
+              <p id="done-when" class="tk-done-when"></p>
+            </div>
+          </div>
+          <dl class="tk-info">
+            <div>
+              <dt>Delivered to</dt>
+              <dd id="done-to"></dd>
+            </div>
+            <div>
+              <dt>Items</dt>
+              <dd id="done-items"></dd>
+            </div>
+            <div>
+              <dt>Total paid</dt>
+              <dd id="done-total"></dd>
+            </div>
+          </dl>
+          <p class="tk-done-note">Thank you for shopping with Savory-X. This summary is removed automatically at <span
+              id="done-clear"></span>.</p>
+        </section>
+
+        <section id="map-card" class="tk-card" aria-labelledby="map-heading">
           <h2 id="map-heading">Delivery route</h2>
           <div class="tk-map-frame">
             <iframe id="route-map" title="Google Map showing the route from our shop to your delivery location"
@@ -271,6 +286,7 @@
               <dd id="route-to"></dd>
             </div>
           </dl>
+          <p id="map-source" class="tk-map-source"></p>
           <a id="map-link" class="tk-outline-btn" href="#" target="_blank" rel="noopener">
             Open in Google Maps<span class="visually-hidden"> (opens in a new tab)</span>
           </a>
@@ -308,7 +324,7 @@
         </section>
 
         <section class="tk-card" aria-labelledby="items-heading">
-          <h2 id="items-heading">Your items</h2>
+          <h2 id="items-heading">Order summary</h2>
           <ul id="items-list" class="tk-items"></ul>
           <dl class="tk-totals">
             <div>
@@ -353,7 +369,7 @@
         </a>
         <p>Thoughtful essentials for your kitchen, home and workspace.</p>
       </div>
-      <div class="footer-col">
+      <div class="footer-co">
         <h3>Quick Links</h3>
         <ul>
           <li><a href="home.html">Home</a></li>

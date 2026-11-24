@@ -717,6 +717,32 @@ main {
     gap: 2rem;
 }
 
+.footer-co h3 {
+    color: var(--white);
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+}
+
+.footer-co ul {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.footer-co a {
+    color: var(--grey-100);
+    text-decoration: none;
+    font-size: 0.95rem;
+}
+
+.footer-co a:hover {
+    color: var(--white);
+    text-decoration: underline;
+}
+
 .footer-col h3 {
     color: var(--white);
     font-family: var(--font-body);
@@ -862,6 +888,12 @@ kbd {
 }
 
 /* ---------- 8. Media Queries ---------- */
+@media (max-width: 767px) {
+    .footer-co {
+        display: none;
+    }
+}
+
 @media (min-width: 768px) {
     body {
         padding-bottom: 0;

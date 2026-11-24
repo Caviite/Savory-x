@@ -6,7 +6,6 @@
    local version is used instead.
 
    What this file does, in order:
-   1. Settings you may want to change
    2. Reads the cart and fills the order summary
    3. Checks the delivery form
    4. Google location (browser geolocation, no key, no login)
@@ -352,7 +351,9 @@ document.addEventListener('DOMContentLoaded', function () {
         var lng = position.coords.longitude.toFixed(6);
         var link = 'https://www.google.com/maps?q=' + lat + ',' + lng;
 
-        savedLocation = { lat: lat, lng: lng, link: link };
+        // accuracy is in metres. It is saved so the Track page knows how far to trust the pin.
+        var accuracy = Math.round(position.coords.accuracy);
+        savedLocation = { lat: lat, lng: lng, link: link, accuracy: accuracy };
         locationLink.value = link;
         locationView.href = link;
         locationResult.hidden = false;
@@ -364,9 +365,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         setLocationLoading(false);
 
-        // accuracy is in metres. A big number means a rough guess.
-        if (position.coords.accuracy > 1000) {
-            setLocationStatus('Location added, but it is not very exact. Please make sure your typed address is complete.', false);
+        // A big number means a rough guess
+        if (accuracy > 200) {
+            setLocationStatus('Location added, but it is not very exact, so the map will use your typed address. Please make sure your address is complete.', false);
         } else {
             setLocationStatus('Your Google location was added to this order.', false);
         }
